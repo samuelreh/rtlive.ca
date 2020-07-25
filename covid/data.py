@@ -1,6 +1,7 @@
 import typing
 import pandas as pd
 import arviz as az
+import numpy as np
 
 from . data_us import (
     get_and_process_covidtracking_data,
