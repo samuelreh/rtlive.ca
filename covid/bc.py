@@ -20,9 +20,8 @@ TEST_URL = f"{BASE_URL}/BCCDC_COVID19_Dashboard_Lab_Information.csv"
 BUCKET = os.environ.get('BUCKET', 'rtlive.ca')
 
 def train():
-    cache = Cache(BUCKET, "cache", "/tmp/rt-bc")
+    cache = Cache(BUCKET, "cache/bc", "/tmp/rt-bc")
 
-    cache.download()
     model_has_expired = _raw_data_modified_at() > cache.modified_at()
     if model_has_expired:
         raw_testing, raw_cases = _get_raw_bc_data()
@@ -30,9 +29,10 @@ def train():
         region = "BC"
         model = GenerativeModel(region, df.loc[region])
         model.sample()
-        result = summarize_inference_data(gm.inference_data)
+        result = summarize_inference_data(model.inference_data)
         cache.set({'model': model, 'data': df, 'result': result})
     else:
+        cache.download()
         model, result = itemgetter('model','result')(cache.get())
 
     return model, result
