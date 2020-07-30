@@ -15,9 +15,9 @@ class Cache():
         self.s3_path = f"{s3_base_path}/{self.FILENAME}"
         self.local_path = f"{local_base_path}/{self.FILENAME}"
         self.local_base_path = local_base_path
+        Path(self.local_base_path).mkdir(parents=True, exist_ok=True)
 
     def download(self):
-        Path(self.local_base_path).mkdir(parents=True, exist_ok=True)
         try:
             self.s3.download_file(self.s3_bucket, self.s3_path, self.local_path)
         except Exception as e:
