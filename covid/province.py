@@ -3,7 +3,7 @@ import logging
 import requests
 import pytz
 from dataclasses import dataclass
-from datetime import timedelta, datetime
+from datetime import datetime
 from dateutil.parser import parse as parsedate
 from operator import itemgetter
 
@@ -49,9 +49,7 @@ def train(region):
     cache = Cache(BUCKET, f"cache/{region}", f"/tmp/rt-{region}")
     timezone = pytz.timezone(TIMEZONES[region])
 
-    if FORCE_USE_CACHE or datetime.now(pytz.UTC) > (
-        cache.modified_at() + timedelta(hours=20)
-    ):
+    if FORCE_USE_CACHE or cache.is_fresh():
         cache.download()
         model, result = itemgetter("model", "result")(cache.get())
         updated_at = cache.modified_at().astimezone(timezone)

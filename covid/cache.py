@@ -1,3 +1,4 @@
+from datetime import timedelta, datetime
 import os
 from pathlib import Path
 import pickle
@@ -15,14 +16,19 @@ class Cache:
         self.s3_bucket = s3_bucket
         self.s3_path = f"{s3_base_path}/{self.FILENAME}"
         self.local_path = f"{local_base_path}/{self.FILENAME}"
-        self.local_base_path = local_base_path
-        Path(self.local_base_path).mkdir(parents=True, exist_ok=True)
+        Path(local_base_path).mkdir(parents=True, exist_ok=True)
 
     def download(self):
         try:
             self.s3.download_file(self.s3_bucket, self.s3_path, self.local_path)
         except Exception as e:
             return
+
+    def is_fresh(self):
+        now = datetime.now(pytz.UTC)
+        last_run = self.modified_at()
+        about_a_day = timedelta(hours=22)
+        return now < last_run + about_a_day
 
     def modified_at(self):
         try:
