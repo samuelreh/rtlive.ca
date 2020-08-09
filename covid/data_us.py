@@ -58,11 +58,14 @@ def process_covidtracking_data(data: pd.DataFrame, run_date: pd.Timestamp):
     data.loc[idx["SC", pd.Timestamp("2020-06-26")], :] = 0
 
     # Two days of no new data then lumped sum on third day with lack of new total tests
-    data.loc[idx["OR", pd.Timestamp("2020-06-26") : pd.Timestamp("2020-06-28")], 'positive'] = 174
-    data.loc[idx["OR", pd.Timestamp("2020-06-26") : pd.Timestamp("2020-06-28")], 'total'] = 3296
+    data.loc[
+        idx["OR", pd.Timestamp("2020-06-26") : pd.Timestamp("2020-06-28")], "positive"
+    ] = 174
+    data.loc[
+        idx["OR", pd.Timestamp("2020-06-26") : pd.Timestamp("2020-06-28")], "total"
+    ] = 3296
 
-
-    #https://twitter.com/OHdeptofhealth/status/1278768987292209154
+    # https://twitter.com/OHdeptofhealth/status/1278768987292209154
     data.loc[idx["OH", pd.Timestamp("2020-07-01")], :] = 0
 
     # Nevada didn't report total tests this day
@@ -87,7 +90,7 @@ def process_covidtracking_data(data: pd.DataFrame, run_date: pd.Timestamp):
 
     # At the real time of `run_date`, the data for `run_date` is not yet available!
     # Cutting it away is important for backtesting!
-    return data.loc[idx[:, :(run_date - pd.DateOffset(1))], ["positive", "total"]]
+    return data.loc[idx[:, : (run_date - pd.DateOffset(1))], ["positive", "total"]]
 
 
 def get_and_process_covidtracking_data(run_date: pd.Timestamp):

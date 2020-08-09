@@ -55,8 +55,7 @@ class GenerativeModel:
             posterior_predictive = pm.sample_posterior_predictive(self.trace)
 
         _inference_data = az.from_pymc3(
-            trace=self.trace,
-            posterior_predictive=posterior_predictive,
+            trace=self.trace, posterior_predictive=posterior_predictive,
         )
         _inference_data.posterior.attrs["model_version"] = self.version
 
@@ -126,11 +125,7 @@ class GenerativeModel:
 
             # Let log_r_t walk randomly with a fixed prior of ~0.035. Think
             # of this number as how quickly r_t can react.
-            log_r_t = pm.GaussianRandomWalk(
-                "log_r_t",
-                sigma=0.035,
-                dims=["date"]
-            )
+            log_r_t = pm.GaussianRandomWalk("log_r_t", sigma=0.035, dims=["date"])
             r_t = pm.Deterministic("r_t", pm.math.exp(log_r_t), dims=["date"])
 
             # For a given seed population and R_t curve, we calculate the
@@ -160,7 +155,7 @@ class GenerativeModel:
                     tt.reshape(p_delay, (1, len(p_delay))),
                     border_mode="full",
                 )[0, :len_observed],
-                dims=["date"]
+                dims=["date"],
             )
 
             # Picking an exposure with a prior that exposure never goes below
@@ -171,27 +166,32 @@ class GenerativeModel:
             exposure = pm.Deterministic(
                 "exposure",
                 pm.math.clip(tests, self.observed.total.max() * 0.1, 1e9),
-                dims=["date"]
+                dims=["date"],
             )
 
             # Test-volume adjust reported cases based on an assumed exposure
             # Note: this is similar to the exposure parameter in a Poisson
             # regression.
             positive = pm.Deterministic(
-                "positive", exposure * test_adjusted_positive,
-                dims=["date"]
+                "positive", exposure * test_adjusted_positive, dims=["date"]
             )
 
             # Save data as part of trace so we can access in inference_data
-            observed_positive = pm.Data("observed_positive", self.observed.positive.values, dims=["date"])
-            nonzero_observed_positive = pm.Data("nonzero_observed_positive", self.observed.positive[nonzero_days.values].values, dims=["nonzero_date"])
+            observed_positive = pm.Data(
+                "observed_positive", self.observed.positive.values, dims=["date"]
+            )
+            nonzero_observed_positive = pm.Data(
+                "nonzero_observed_positive",
+                self.observed.positive[nonzero_days.values].values,
+                dims=["nonzero_date"],
+            )
 
             positive_nonzero = pm.NegativeBinomial(
                 "nonzero_positive",
                 mu=positive[nonzero_days.values],
                 alpha=pm.Gamma("alpha", mu=6, sigma=1),
                 observed=nonzero_observed_positive,
-                dims=["nonzero_date"]
+                dims=["nonzero_date"],
             )
 
         return self.model
