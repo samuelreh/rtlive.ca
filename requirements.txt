@@ -10,7 +10,7 @@ pymc3 >=3.9.2
 pandas==1.0.3
 scipy==1.5.0
 mkl==2019.0
-paramiko==2.7.1
+paramiko==2.10.1
 requests==2.24.0
 plotly==4.9.0
 python-dotenv==0.14.0
