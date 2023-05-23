@@ -11,6 +11,6 @@ pandas==1.0.3
 scipy==1.5.0
 mkl==2019.0
 paramiko==2.7.1
-requests==2.24.0
+requests==2.31.0
 plotly==4.9.0
 python-dotenv==0.14.0
