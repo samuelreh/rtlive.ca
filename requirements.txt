@@ -8,7 +8,7 @@ jupyter_client==6.1.2
 notebook==6.0.3
 pymc3 >=3.9.2
 pandas==1.0.3
-scipy==1.5.0
+scipy==1.10.0
 mkl==2019.0
 paramiko==2.7.1
 requests==2.24.0
